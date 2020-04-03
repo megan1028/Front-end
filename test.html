@@ -1,0 +1,129 @@
+<!--Reference:https://codepen.io/gungorbudak/pen/gPWqRP-->
+<!--Reference:https://www.w3schools.com-->
+<!DOCTYPE html>
+<html>
+  
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <style>
+    .table-striped > tbody > tr:nth-child(2n+1) > td, 
+    .table-striped > tbody > tr:nth-child(2n+1) > th { background-color: LightSalmon; } 
+    .table-striped > tbody > tr:nth-child(2n) > td, 
+    .table-striped > tbody > tr:nth-child(2n) > th { background-color: LemonChiffon; } 
+    .nav-tab > li > a:hover
+    { background-color: LightSalmon !important; border: medium none; border-radius: 0; color:#fff; } 
+    .nav-tabs > li > a:hover
+    { background-color: LightSalmon !important; border: medium none; border-radius: 0; color:#fff; }
+    </style>
+    </head>  
+  <body>
+    <div style="height: 100px;">
+      <div class="col-xs-2">
+        <ul class="nav nav-tab vertical-tab" role="tablist" id="vtab">
+          <li role="presentation" class="active">
+            <a href="#tab1" aria-controls="home" role="tab" data-toggle="tab">empty tab</a></li>
+          <li role="presentation">
+            <a href="#tab2" aria-controls="inbox" role="tab" data-toggle="tab">data</a></li>
+        </ul>
+      </div>
+      <div class="tab-content vertical-tab-content col-xs-10">
+        <div role="tabpanel" class="tab-pane active" id="tab1" style="text-align:center">This is an empty tab.</div>
+        <div role="tabpanel" class="tab-pane" id="tab2">
+          <div class="main">
+            <!-- Actual search box -->
+            <div class="form-group has-feedback has-search">
+              <span class="glyphicon glyphicon-search form-control-feedback"></span>
+              <input class="form-control" id="myInput" type="text" placeholder="Search"></div>
+            <div class="row">
+              <div class="col-sm-8">
+                <ul class="nav nav-tabs">
+                  <li class="active">
+                    <a data-toggle="tab" href="#home">Surfaces</a></li>
+                  <li>
+                    <a data-toggle="tab" href="#menu1">Servers</a></li>
+                </ul>
+                <div class="tab-content">
+                  <div id="home" class="tab-pane fade in active">
+                    <div class="container, col-sm-14">
+                      <table class="table table-bordered table-striped  table-hover">
+                        <thead>
+                          <tr>
+                            <th>Venue Name</th>
+                            <th>Surface Name</th>
+                            <th>Status</th>
+                            <th>Sport</th></tr>
+                        </thead>
+                        <tbody id="id01"></tbody>
+                      </table>
+                    </div>
+                  </div>
+                  <div id="menu1" class="tab-pane fade">
+                    <div class="container, col-sm-14">
+                      <table class="table table-bordered table-striped  table-hover">
+                        <thead>
+                          <tr>
+                            <th>Ip4</th>
+                            <th>Dns</th></thead>
+                        <tbody id="id02"></tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-sm-4">
+                <div class="panel panel-default" style="background:LightSalmon;">
+                  <div class="panel-heading" style="background:LightSalmon;">Detail</div>
+                  <div id="demo" class="panel-body">Panel Content</div></div>
+              </div>
+            </div>
+          </div>
+          <script>var xmlhttp = new XMLHttpRequest();
+            var url = "https://2hsjstzo71.execute-api.us-east-1.amazonaws.com/prod/livebarn-interview-project";
+            var myArr = []; <!--save all the unique ip in this array-->
+            var Ip = [];
+            xmlhttp.onreadystatechange = function() {
+              if (this.readyState == 4 && this.status == 200) {
+                myArr = JSON.parse(this.responseText);
+                myFunction(myArr);
+              }
+            };
+            xmlhttp.open("GET", url, true);
+            xmlhttp.send();
+
+            var panel = "";
+            function myFunction(arr) {
+              var out = "";
+              var server = "";
+              var i;
+
+              for (i = 0; i < arr.length; i++) {
+                out += "<tr onclick = 'myFunc(" + i + ")'> <td>" + arr[i].venueName + "</td><td>" + arr[i].surfaceName + "</td><td>" + arr[i].status + "</td><td>" + arr[i].sport + "</td></tr>";
+                var id = myArr[i].server.id;
+                if (!Ip.includes(id)) {
+                  Ip.push(id);
+                  server += "<tr><td>" + myArr[i].server.ip4 + "</td><td>" + myArr[i].server.dns + "</td></tr>";
+                }
+              }
+              document.getElementById("id01").innerHTML = out;
+              document.getElementById("id02").innerHTML = server;
+            }
+
+            function myFunc(i) {
+              document.getElementById("demo").innerHTML = "Venue Name<br>" + myArr[i].venueName + "<br><br>Surface Name<br>" + myArr[i].surfaceName + "<br><br>Status<br>" + myArr[i].status + "<br><br>Sport<br>" + myArr[i].sport + "<br><br>Server Ip<br>" + myArr[i].server.ip4;
+            }</script>
+          <!---table filter--->
+          <script>$(document).ready(function() {
+              $("#myInput").on("keyup",
+              function() {
+                var value = $(this).val().toLowerCase();
+                $("#id01 tr").filter(function() {
+                  $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                });
+              });
+            });</script>
+  </body>
+
+</html>
